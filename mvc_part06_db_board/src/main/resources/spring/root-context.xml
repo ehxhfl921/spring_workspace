@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<!-- 
+		.properties 파일에 저장된 key:value data를 xml 파일 내부에서 사용할 수 있도록 load 하는 태그 
+		읽힌 .properties 파일에 저장된 Entry data를 key 값으로 호출하여 사용
+		사용 방식은 EL 형식과 동일 : ${key} -> key 값이 일치하는 Entry에 value 호출
+	-->
+	<context:property-placeholder location="classpath:prop/*.properties"/>
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<bean id="ds" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>	
+	
+	<!--  
+		typeAliasPackage : package에 포함된 Class를 class 이름 첫 글자를 소문자로 변경한 별칭으로 등록
+		
+		net.koreate.board.vo.BoardVO == boardVO
+	-->
+	<bean id="factory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="ds" />
+		<!-- <property name="typeAliasesPackage" value="net.koreate.board.vo"/> -->
+		<!-- <property name="mapperLocations" value="classpath:mybatis/sql/*.xml"/> -->
+	</bean>
+	<!-- 
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="factory" />
+	</bean>
+	 -->
+</beans>

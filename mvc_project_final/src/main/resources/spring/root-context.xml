@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+	
+	<context:property-placeholder location="classpath:prop/*.properties"/>
+	
+	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+		<property name="driverClassName" value="${jdbc.driver}"/>
+		<property name="jdbcUrl" value="${jdbc.url}"/>
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="maximumPoolSize" value="20" />
+		<property name="minimumIdle" value="20" />
+		<property name="connectionTimeout" value="300000"/>
+		<property name="idleTimeout" value="200000"/>
+	</bean>	
+	
+	<bean id="ds" class="com.zaxxer.hikari.HikariDataSource">
+		<constructor-arg ref="hikariConfig"/>	
+	</bean>
+	
+	<bean class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="ds"/>
+	</bean>
+	
+	<!-- dataSource 로 생성된 Connection transaction 제어 -->
+	<bean id="transactionManager"
+			class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="ds" />
+	</bean>
+
+	<!-- @Transactional annotation 기반 transaction 제어 -->
+	<tx:annotation-driven/>
+	
+	<!-- 메일 발송 객체 Properties user 기반 -->
+	<bean id="mailSender" 
+		  class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		  <property name="host" value="smtp.gmail.com"/>
+		  <property name="port" value="587" />
+		  <!-- <property name="username" value="chlrlrms2@gmail.com"/> -->
+		  <property name="username" value="${gmail.username}"/>
+		  <!-- <property name="password" value="qylj rehv ytpp vwcr" /> -->
+		  <property name="password" value="${gmail.password}" />
+		  <property name="javaMailProperties">
+			  	<props>
+			  		<prop key="mail.transport.protocol">smtp</prop>
+					<prop key="mail.smtp.auth">true</prop>
+					<prop key="mail.smtp.starttls.enable">true</prop>
+			  	</props>
+		  </property>
+	</bean>
+	
+	<!-- 쿨에스엠에스 문자 MessageService  -->
+	<bean id ="messageService" class="net.nurigo.sdk.message.service.DefaultMessageService">
+		<constructor-arg value="${api_key}"/>
+		<constructor-arg value="${secret_api_key}"/> 
+        <constructor-arg value="${domain}"/> 
+	</bean>
+	
+</beans>

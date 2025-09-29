@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- classpath:/mybatis/sql/userMapper.xml -->
+<!--  
+	SQL문을 정의하고 그 결과를 정의해 놓은 모델(결과 타입)에 매핑시키는
+	mybatis 방식에서 사용하는 파일
+-->
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="userMapper">
+	
+	<!--  
+		SQL query를 실행하는 태그
+		insert, updatem delete, select
+		
+		Connection 에서 쿼리를 수행하기 위한 객체를 지정
+		Statement : "STATEMENT"
+		PreparedStatement : "PREPARED" -> 기본 값
+		CallableStatement : "CALLABLE"
+	-->
+	<!--  
+		mybatis로 전달할 수 있는 매개 변수는 1개만 가능
+		
+		parameterType : 처리 로직에서 전달 받은 SQL 구문에 사용될 매개 변수의 자료형 지정
+		-> 자주 사용되는 자료형은 별칭으로 지정 가능
+		java.lang.String -> String, string
+		java.lang.Integer -> int, integer
+		java.util.Map -> map
+		java.util.HashMap -> hashmap
+	-->
+	
+	<!--  
+		insert, update, delete
+		table 행 정보 변경 쿼리 작업은 수행 후 따로 지정하지 않아도 변경된 행의 개수를 정수로 반환
+	-->
+	<insert id="insertUser" 
+			statementType="PREPARED"
+			parameterType="net.koreate.db.vo.UserVO">
+		INSERT INTO test_user(userid, userpw, username)
+		VALUES(#{userid}, #{userpw}, #{username})
+	</insert>
+	
+	<!--  
+		resultType
+		SELECT 문으로 검색된 행 정보를 저장할 객체 타입(반환 타입) 지정
+	-->
+	<select id="readUser" parameterType="string" resultType="user">
+		SELECT * FROM test_user WHERE userid = #{userid}
+	</select>
+	
+	<!-- userMapper.readUserWithPass -->
+	<!-- parameterType이 Map일 경우 #{key} 형태로 작성 -->
+	<select id="readUserWithPass" parameterType="map" resultType="user"> 
+		SELECT * FROM test_user WHERE userid = #{userid} AND userpw = #{userpw}
+	</select>
+	
+	<!-- 
+		List로 목록을 반환하는 경우 selectList로 호출되므로 저장할 제네릭 타입만
+		resultType에 명시 
+		List<UserVO> => resultType = "UserVO"
+	-->
+	<select id="readUserList" resultType="user">
+		SELECT * FROM test_user ORDER BY regdate DESC
+	</select>
+	
+	<select id="max" resultType="int">
+		SELECT max(uno) FROM test_user
+	</select>
+</mapper>
+

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+	<context:property-placeholder location="classpath:prop/*.properties"/>	
+	<!-- 
+		HiakriCP 자바에서 가장 빠르고 가벼운 JDBC Connection Pool 중 하나
+		Spring, Spring Boot, Mybatis 등과 함께 데이터베이스 연결 성능을 최적화할 때 사용
+		속도가 빠르고 지연시간이 짧은 것이 특징.
+		
+		HikariConfig => Connection 생성 정보를 저장하는 객체
+		HikariDataSource => database Connection 관리(DataSource) 객체
+	 -->
+	 
+	 <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+	 	<property name="driverClassName" value="${jdbc.driver}"/>
+	 	<property name="jdbcUrl" value="${jdbc.url}"/>
+	 	<property name="username" value="${jdbc.username}"/>
+	 	<property name="password" value="${jdbc.password}"/>
+
+	 	<!-- 최대로 생성 할 수 있는 Connection 객체 수 : 기본값 10 -->
+	 	<property name="maximumPoolSize" value="30"/>
+	 	<!-- 동작(일) 하지않아도 Connection Pool에 유지되는 객체 수 : 기본값 = maximumPoolSize -->
+	 	<property name="minimumIdle" value="10"/>
+	 	<!-- pool에서 Connection 을 가져오기 위해 대기하는 시간 : 기본 값 250ms -->
+	 	<property name="connectionTimeout" value="300000"/>
+	 	<!-- 일을하지 않는 Connection 객체를 제거하기 까지 대기 시간 : 기본 값 60000ms -->
+	 	<property name="idleTimeout" value="120000"/>
+	 </bean>
+		
+	 <bean id="ds" class="com.zaxxer.hikari.HikariDataSource">
+	 	<constructor-arg ref="hikariConfig" />
+	 </bean>	
+	 
+	 <!-- MyBatis SqlSessionFactory 등록 -->
+	 <bean class="org.mybatis.spring.SqlSessionFactoryBean">
+	 	<property name="dataSource" ref="ds" />
+	 </bean>
+	 
+	 
+</beans>
+
+
+
+
+
+
+
+
+
+
+
+

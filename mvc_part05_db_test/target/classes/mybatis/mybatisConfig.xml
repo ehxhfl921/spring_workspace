@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- classpath:/mybatis/mybatisConfig.xml -->
+<!--  
+	mybatis 환경 설정 파일
+	DTD(문서 타입 정의) Document Type Definition
+	XML 문서의 구조 및 해당 문서에 사용할 수 있는 적법한 요소와 속성을 정의
+-->
+<!DOCTYPE configuration 
+PUBLIC "-//mybatis.org/DTD config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	
+	<typeAliases>
+		<typeAlias alias="user" type="net.koreate.db.vo.UserVO" />
+	</typeAliases>
+	
+	<mappers>
+		<mapper resource="mybatis/sql/userMapper.xml"/>
+	</mappers>
+	
+</configuration>

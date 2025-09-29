@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- classpath:/mybatis/sql/boardMapper.xml -->
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- <mapper namespace="boardMapper"> -->
+
+<!-- 호출되어서 함께 동작할 인터페이스 지정 -->
+<mapper namespace="net.koreate.board.dao.BoardDAO">
+
+	<!-- parameterType="net.koreate.board.vo.BoardVO" -->
+	<!-- int create(BoardVO board) -->
+	<insert id="create" parameterType="boardVO">
+		INSERT INTO test_board(title, content, writer)
+		VALUES(#{title}, #{content}, #{writer})
+	</insert>
+	
+	<select id="listCriteria" 
+			parameterType="net.koreate.common.util.Criteria"
+			resultType="boardVO">
+		SELECT * FROM test_board ORDER BY bno DESC 
+		OFFSET #{startRow} ROWS FETCH NEXT #{perPageNum} ROWS ONLY
+	</select>
+	
+	<select id="totalCount" resultType="int">
+		SELECT count(*) FROM test_board
+	</select>
+	
+	<!-- viewcnt 컬럼 기존 데이터를 1 증가해서 저장 -->
+	<update id="updateCnt" parameterType="int">
+		UPDATE test_board SET viewcnt = viewcnt + 1
+		WHERE bno = #{bno}
+	</update>
+	
+	<!-- 게시글 번호로 검색한 1개의 게시글 정보 -->
+	<select id="read" parameterType="int" resultType="boardVO">
+		SELECT * FROM test_board WHERE bno = #{bno}	
+	</select>
+	
+	<update id="update" parameterType="boardVO">
+		UPDATE test_board SET title = #{title}, content = #{content}, writer = #{writer}
+		WHERE bno = #{bno}
+	</update>
+	
+	<delete id="delete" parameterType="int">
+		DELETE FROM test_board WHERE bno = #{bno}
+	</delete>
+</mapper>
